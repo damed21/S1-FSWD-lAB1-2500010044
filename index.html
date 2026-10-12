@@ -1,0 +1,192 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Product Store</title>
+
+  <style>
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      font-family: Arial, sans-serif;
+      background: #f4f6fb;
+      color: #202944;
+    }
+
+    header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 20px;
+      padding: 22px 7%;
+      background: white;
+      box-shadow: 0 2px 8px #00000010;
+    }
+
+    header h1 {
+      margin: 0;
+    }
+
+    #search {
+      width: 280px;
+      max-width: 55%;
+      padding: 12px;
+      border: 1px solid #ccd2df;
+      border-radius: 8px;
+      font-size: 15px;
+    }
+
+    main {
+      padding: 35px 7%;
+    }
+
+    #products {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+      gap: 20px;
+    }
+
+    .product {
+      padding: 24px;
+      border-radius: 12px;
+      background: white;
+      box-shadow: 0 3px 12px #0000000c;
+    }
+
+    .product h3 {
+      margin-top: 0;
+    }
+
+    .price {
+      color: #405bd8;
+      font-size: 21px;
+      font-weight: bold;
+    }
+
+    button {
+      display: block;
+      margin: 28px auto;
+      padding: 13px 24px;
+      border: none;
+      border-radius: 8px;
+      background: #405bd8;
+      color: white;
+      font-size: 15px;
+      cursor: pointer;
+    }
+
+    #message {
+      color: #6b7280;
+    }
+
+    @media (max-width: 600px) {
+      header {
+        align-items: stretch;
+        flex-direction: column;
+      }
+
+      #search {
+        width: 100%;
+        max-width: 100%;
+      }
+    }
+  </style>
+</head>
+
+<body>
+  <header>
+    <h1>🛍️ Product Store</h1>
+    <input
+      id="search"
+      type="text"
+      placeholder="Search products..."
+      aria-label="Search products"
+    >
+  </header>
+
+  <main>
+    <h2>Available Products</h2>
+    <p id="message">Click Load Products to view the catalog.</p>
+
+    <div id="products"></div>
+
+    <button id="loadButton">Load Products</button>
+  </main>
+
+  <script>
+    const search = document.getElementById("search");
+    const productsArea = document.getElementById("products");
+    const message = document.getElementById("message");
+    const loadButton = document.getElementById("loadButton");
+
+    let products = [];
+
+    function displayProducts(items) {
+      productsArea.replaceChildren();
+
+      if (items.length === 0) {
+        message.textContent = "No products found!";
+        return;
+      }
+
+      message.textContent = items.length + " product(s) found";
+
+      items.forEach(function(product) {
+        const card = document.createElement("div");
+        card.className = "product";
+
+        const name = document.createElement("h3");
+        name.textContent = product.name;
+
+        const price = document.createElement("p");
+        price.className = "price";
+        price.textContent = "₹" + Number(product.price).toLocaleString("en-IN");
+
+        card.appendChild(name);
+        card.appendChild(price);
+        productsArea.appendChild(card);
+      });
+    }
+
+    async function loadProducts() {
+      loadButton.disabled = true;
+      message.textContent = "Loading products...";
+
+      try {
+        const response = await fetch("/api/products");
+
+        if (!response.ok) {
+          throw new Error("Unable to load product data");
+        }
+
+        const data = await response.json();
+        products = data.products;
+        displayProducts(products);
+      } catch (error) {
+        message.textContent =
+          "Could not load products. Check the server and db.json.";
+        console.error(error);
+      } finally {
+        loadButton.disabled = false;
+      }
+    }
+
+    loadButton.addEventListener("click", loadProducts);
+
+    search.addEventListener("input", function() {
+      const query = search.value.toLowerCase().trim();
+
+      const filteredProducts = products.filter(function(product) {
+        return product.name.toLowerCase().includes(query);
+      });
+
+      displayProducts(filteredProducts);
+    });
+  </script>
+</body>
+</html>

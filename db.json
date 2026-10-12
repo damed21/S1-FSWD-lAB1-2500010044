@@ -1,0 +1,35 @@
+
+{
+  "products": [
+    {
+      "id": 1,
+      "name": "iPhone 16",
+      "price": 79900
+    },
+    {
+      "id": 2,
+      "name": "Samsung Galaxy S25",
+      "price": 80999
+    },
+    {
+      "id": 3,
+      "name": "OnePlus 13",
+      "price": 69999
+    },
+    {
+      "id": 4,
+      "name": "Google Pixel 9",
+      "price": 74999
+    },
+    {
+      "id": 5,
+      "name": "Redmi Note 14",
+      "price": 17999
+    },
+    {
+      "id": 6,
+      "name": "Realme 14 Pro",
+      "price": 24999
+    }
+  ]
+}
